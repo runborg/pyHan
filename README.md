@@ -24,14 +24,14 @@ Decode messages from file:
 from HAN import readHan
 with open(file, "rb") as ser
     while True:
-    try:
-        han = readHan(ser)
-        print("{} Watt".format(han.data["act_pow_pos"]))
-    except EOFError as e:
-        # End Of File
-        break
-    except Exception as e:
-        # Unable to decode message
-        continue
+        try:
+            han = readHan(ser)
+            print("{} Watt".format(han.data["act_pow_pos"]))
+        except EOFError as e:
+            # End Of File
+            break
+        except Exception as e:
+            # Unable to decode message
+            continue
 
 ```
