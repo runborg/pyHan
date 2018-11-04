@@ -42,5 +42,5 @@ For a more complete example se serialHan.py
 
 # Tested
 
-For now extensive testing is not completed, and the library is only tested on the `Kaifa MA304H4` meter
+For now extensive testing is not completed, and the library is only tested on the `Kaifa MA304H4` meter.
 Also only messagetype 1 and 2 is tested for now
