@@ -39,8 +39,9 @@ with open(file, "rb") as ser
 
 For a more complete example se `serialHan.py` and `influxUploader.py`
 
-##InfluxUploader.py
+## InfluxUploader.py
 Sample script to upload Usage data to influxDB
+
 usage: `python3 pyinfluxUploader.py --influxserver server.ip.address --username user --password pass --database database`
 
 
