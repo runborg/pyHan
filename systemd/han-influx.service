@@ -1,0 +1,12 @@
+[Unit]
+Description=Han to InfluxDB exporter
+After=network.target network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/serialInflux.py
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target
