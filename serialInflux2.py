@@ -19,7 +19,11 @@ parser.add_argument('--database', default='amsreader')
 
 args = parser.parse_args()
 
-with serial.Serial(args.serialport, 2400, timeout=5, bytesize=8, parity='N', stopbits=1) as ser:
+with serial.Serial(args.serialport, 2400, timeout=5, 
+                   bytesize=serial.EIGHTBITS,
+                   parity=serial.PARITY_EVEN,
+                   stopbits=serial.STOPBITS_ONE
+                   ) as ser:
         influx = InfluxDBClient(host=args.influxserver, 
                                 port=8086, 
                                 use_udp=False,

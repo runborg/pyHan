@@ -8,7 +8,11 @@ def default_serializer(o):
               return o.isoformat()
 
 buff = {}
-with serial.Serial('/dev/ttyUSB0', 2400, timeout=5) as ser:
+with serial.Serial('/dev/ttyUSB0', 2400, timeout=5, 
+                   bytesize=serial.EIGHTBITS,
+                   parity=serial.PARITY_EVEN, 
+                   stopbits=serial.STOPBITS_ONE,
+                   ) as ser:
     try:
         while True:
             han = readHan(ser)
