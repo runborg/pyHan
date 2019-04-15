@@ -21,6 +21,7 @@ with serial.Serial('/dev/ttyUSB0', 2400, timeout=5,
             print("\033[H\033[J")
             print(json.dumps(buff, 
                             indent=4,
+                            sort_keys=True,
                             default=default_serializer))
     except EOFError as e:
             # We are on serial.. EOF meens no data, but it might come? :) 
