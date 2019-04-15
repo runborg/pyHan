@@ -223,12 +223,18 @@ def readObisPacket(ser):
 
         if buff[0] == 0x7e:
             # I Think we have a header here 0x7e
+            # Trying to read obis frame
             buff += ser.read(2)
+            if buff[1] == 0x7e:
+                # We have actually fetched an end-of-frame byte..
+                # removeing end-of-frame byte and rereading last byte of FFF
+                buff = buff[1:4] #Remove end-of-frame byte
+                buff += ser.read(1) #read last part of FFF
+
             FFF = int.from_bytes(buff[1:3], byteorder='big')
             Ftype = (FFF & 0xF000) >> 12
             Fsegment = bool(FFF & 0x800)
             Flength = FFF & 0x7FF
-            #print(hexprint(FFF))
 
             if Ftype == 0xA and Fsegment == 0x00:
                 break
