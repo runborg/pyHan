@@ -1,0 +1,16 @@
+serial:
+        port: /dev/ttyUSB0
+
+influx:
+        server: 127.0.0.1
+        username: influxuser
+        password: influxpass
+        database: ams
+
+http:
+        host: 0.0.0.0
+        port: 9001
+
+tcpserver:
+        host: 0.0.0.0
+        port: 9000

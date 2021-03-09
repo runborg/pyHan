@@ -36,6 +36,20 @@ with open(file, "rb") as ser
 
 ```
 
+Asyncio Applicaton:
+The library have been updated to support python3 asyncio and an application that supports
+shipping data to a influxdb server, runs a really simple http api server and a TCP Socket
+server have been created as a proof of concept.
+
+to use this: edit config.yml with your settings and remove the config blocks for services that is not needed
+start the application with 
+```
+python3 -m pyhan
+```
+Install dependencies with
+````
+python3 -m pip install aiohttp pyserial pyserial-asyncio aioinflux pyyaml 
+```
 
 For a more complete example se `serialHan.py` and `influxUploader.py`
 

@@ -3,6 +3,9 @@ from datetime import datetime as dt
 from struct import unpack
 from pprint import pprint
 import sys
+import struct
+import asyncio
+
 class HAN_message():
     def __init__(self, buff):
         if buff[0]  != 0x09:
@@ -252,5 +255,56 @@ def readObisPacket(ser):
 
 def readHan(ser):
     pkg = readObisPacket(ser)
+    obis = obis_header(pkg)
+    return HAN_message(obis.data)
+
+
+async def async_read(ser, length):
+    # Wee need to block until we have something to return
+    buff = bytes()
+    while True:
+        buff += await ser.read(length)
+        if len(buff) >= length:
+            return buff
+        await asyncio.sleep(0.1)
+
+
+async def async_readObisPacket(ser):
+    buff = bytes()
+    while True:
+        buff = await async_read(ser, 1)
+        if not buff:
+            raise EOFError("reached end of file")
+
+        if buff[0] == 0x7e:
+            # I Think we have a header here 0x7e
+            # Trying to read obis frame
+            buff += await async_read(ser, 2)
+            if buff[1] == 0x7e:
+                # We have actually fetched an end-of-frame byte..
+                # removeing end-of-frame byte and rereading last byte of FFF
+                buff = buff[1:4]  # Remove end-of-frame byte
+                buff += await async_read(ser, 1)  # read last part of FFF
+
+            FFF = int.from_bytes(buff[1:3], byteorder='big')
+            Ftype = (FFF & 0xF000) >> 12
+            Fsegment = bool(FFF & 0x800)
+            Flength = FFF & 0x7FF
+            
+            if Ftype == 0xA and Fsegment == 0x00:
+                break
+    # We have detected a frame, going on
+    bytes_to_go = Flength - 1  # Flength + 2x Flags 0x7e - 3 bytes read)
+
+    if len(buff) < Flength:
+        b = await async_read(ser, bytes_to_go)
+        if not b:
+            await asyncio.sleep(0.1)
+        buff += b
+    return buff
+
+
+async def async_readHan(ser):
+    pkg = await async_readObisPacket(ser)
     obis = obis_header(pkg)
     return HAN_message(obis.data)
