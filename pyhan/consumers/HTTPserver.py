@@ -46,5 +46,19 @@ class HTTPserverPlugin(BaseConsumer):
 
     async def broadcast_reciever(self, message):
         # print(f'{self.__class__.__name__} got message {message!r}')
+        if not "act_energy_pa_acu" in self.data:
+            self.data["act_energy_pa_acu"] = 0.0
+        if "act_energy_pa" in message.data:
+            try:
+                _LOGGER.info(f'meter: {message.data.get("act_energy_pa",0):10} acm2: {self.data.get("act_energy_pa_acu2",0.0):10.4f} diff: {message.data.get("act_energy_pa",0) - self.data.get("act_energy_pa_acu2",0.0):10.4f} usage: {message.data.get("act_energy_pa",0) - self.data.get("act_energy_pa_acu2",0.0):4.4f} acu: {self.data.get("act_energy_pa_acu",0.0)}')
+            except Exception:
+                print(Exception)
+            self.data["act_energy_pa_acu"] = 0.0
+            self.data["act_energy_pa_acu2"] = float(message.data["act_energy_pa"])
+            self.data["act_energy_pa_offset"] = message.data["act_energy_pa"] - self.data["act_energy_pa_acu2"]
+        else:
+            self.data["act_energy_pa_acu"] += message.data["act_pow_pos"] / (3600/2)
+            if "act_energy_pa_acu2" in self.data:
+                self.data["act_energy_pa_acu2"] = self.data["act_energy_pa"] + self.data["act_energy_pa_acu"]
         self.data.update(message.data)
         pass
