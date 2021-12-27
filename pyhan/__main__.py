@@ -122,8 +122,15 @@ class Application():
         _LOGGER.debug('Opening serial connection')
         reader, writer = await serial_asyncio.open_serial_connection(url='/dev/ttyUSB0', baudrate=2400)
         while True:
-            pkg = await HAN.async_readHan(reader)
-            await self.broadcast_message(pkg)
+            try:
+                pkg = await HAN.async_readHan(reader)
+                await self.broadcast_message(pkg)
+            except ValueError as E:
+                _LOGGER.info("Recieved malformed packet: %s", E)
+            except Exception as E:
+                _LOGGER.error("Serial reciever failed: %s", E)
+                _LOGGER.error(traceback.format_exc())
+                asyncio.sleep(10)
 
     async def async_random_generator(self):
         nr = 0
